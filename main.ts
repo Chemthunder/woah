@@ -41,6 +41,10 @@ let timerImg = img`
     .
 `
 
+let endMessageImg = img`
+    .
+`
+
 // anim frames
 let dash1 = img`
     1 . 1
@@ -149,7 +153,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite: Sprite, otherSprite: Sprite) {
     if (!isDashing) {
-        info.changeLifeBy(-1);
+     //   info.changeLifeBy(-1);
         scene.cameraShake(1, 250);
         sprites.destroy(otherSprite, effects.ashes, randint(150, 200));
     } else {
@@ -169,12 +173,13 @@ info.onLifeZero(function () {
 
 })
 
-info.onScore(1, function () {
+info.onScore(10, function () {
     gameActive = false;
     controller.moveSprite(player, 0, 0)
     player.vx = 0;
     player.vy = 0;
     sprites.destroyAllSpritesOfKind(SpriteKind.Enemy, effects.disintegrate);
+    player.startEffect(effects.spray)
 
     animation.runMovementAnimation(
         player,
@@ -186,7 +191,24 @@ info.onScore(1, function () {
         animation.animationPresets(animation.easeDown),
         2000, false)
 
-    
+    let endMessage = sprites.create(endMessageImg, SpriteKind.GuiElement);
+    endMessage.setPosition(screen.width / 2, screen.height);
+    endMessage.z = 3;
+
+    animation.runMovementAnimation(endMessage,
+        animation.animationPresets(animation.easeUp),
+        2000, false)
+
+
+    forever(function () {
+        endMessage.sayText(
+            "Congratulations!",
+            1000,
+            false,
+            1,
+            15
+        );
+    })
 })
 
 
